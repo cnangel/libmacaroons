@@ -37,7 +37,7 @@ void
 explicit_bzero(void *buf, size_t len);
 
 __attribute__ ((visibility ("default")))
-void arc4random_buf(void * const buf, const size_t size)
+void arc4random_buf(void *const buf, const size_t size)
 {
-    explicit_bzero(buf, size);
+	explicit_bzero(buf, size);
 }

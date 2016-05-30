@@ -52,15 +52,15 @@ struct macaroon_verifier;
 
 enum macaroon_returncode
 {
-    MACAROON_SUCCESS          = 2048,
-    MACAROON_OUT_OF_MEMORY    = 2049,
-    MACAROON_HASH_FAILED      = 2050,
-    MACAROON_INVALID          = 2051,
-    MACAROON_TOO_MANY_CAVEATS = 2052,
-    MACAROON_CYCLE            = 2053,
-    MACAROON_BUF_TOO_SMALL    = 2054,
-    MACAROON_NOT_AUTHORIZED   = 2055,
-    MACAROON_NO_JSON_SUPPORT  = 2056
+	MACAROON_SUCCESS          = 2048,
+	MACAROON_OUT_OF_MEMORY    = 2049,
+	MACAROON_HASH_FAILED      = 2050,
+	MACAROON_INVALID          = 2051,
+	MACAROON_TOO_MANY_CAVEATS = 2052,
+	MACAROON_CYCLE            = 2053,
+	MACAROON_BUF_TOO_SMALL    = 2054,
+	MACAROON_NOT_AUTHORIZED   = 2055,
+	MACAROON_NO_JSON_SUPPORT  = 2056
 };
 
 /* Create a new macaroon.
@@ -69,15 +69,15 @@ enum macaroon_returncode
  *  - id/id_sz is the public identifier the macaroon issuer can use to identify
  *    the key
  */
-struct macaroon*
-macaroon_create(const unsigned char* location, size_t location_sz,
-                const unsigned char* key, size_t key_sz,
-                const unsigned char* id, size_t id_sz,
-                enum macaroon_returncode* err);
+struct macaroon *
+macaroon_create(const unsigned char *location, size_t location_sz,
+                const unsigned char *key, size_t key_sz,
+                const unsigned char *id, size_t id_sz,
+                enum macaroon_returncode *err);
 
 /* Destroy a macaroon, freeing resources */
 void
-macaroon_destroy(struct macaroon* M);
+macaroon_destroy(struct macaroon *M);
 
 /* Check a macaroon's integrity
  *
@@ -88,17 +88,17 @@ macaroon_destroy(struct macaroon* M);
  * !0 -> no good
  */
 int
-macaroon_validate(const struct macaroon* M);
+macaroon_validate(const struct macaroon *M);
 
 /* Add a new first party caveat, and return a new macaroon.
  *  - predicate/predicate_sz is the caveat to be added to the macaroon
  *
  * Returns a new macaroon, leaving the original untouched.
  */
-struct macaroon*
-macaroon_add_first_party_caveat(const struct macaroon* M,
-                                const unsigned char* predicate, size_t predicate_sz,
-                                enum macaroon_returncode* err);
+struct macaroon *
+macaroon_add_first_party_caveat(const struct macaroon *M,
+                                const unsigned char *predicate, size_t predicate_sz,
+                                enum macaroon_returncode *err);
 
 /* Add a new third party caveat, and return a new macaroon.
  *  - location/location_sz is a hint to the third party's location
@@ -113,96 +113,96 @@ macaroon_add_first_party_caveat(const struct macaroon* M,
  *
  * Returns a new macaroon, leaving the original untouched.
  */
-struct macaroon*
-macaroon_add_third_party_caveat(const struct macaroon* M,
-                                const unsigned char* location, size_t location_sz,
-                                const unsigned char* key, size_t key_sz,
-                                const unsigned char* id, size_t id_sz,
-                                enum macaroon_returncode* err);
+struct macaroon *
+macaroon_add_third_party_caveat(const struct macaroon *M,
+                                const unsigned char *location, size_t location_sz,
+                                const unsigned char *key, size_t key_sz,
+                                const unsigned char *id, size_t id_sz,
+                                enum macaroon_returncode *err);
 
 /* Where are the third-parties that give discharge macaroons? */
 unsigned
-macaroon_num_third_party_caveats(const struct macaroon* M);
+macaroon_num_third_party_caveats(const struct macaroon *M);
 
 int
-macaroon_third_party_caveat(const struct macaroon* M, unsigned which,
-                            const unsigned char** location, size_t* location_sz,
-                            const unsigned char** identifier, size_t* identifier_sz);
+macaroon_third_party_caveat(const struct macaroon *M, unsigned which,
+                            const unsigned char **location, size_t *location_sz,
+                            const unsigned char **identifier, size_t *identifier_sz);
 
 /* Prepare the macaroon for a request */
-struct macaroon*
-macaroon_prepare_for_request(const struct macaroon* M,
-                             const struct macaroon* D,
-                             enum macaroon_returncode* err);
+struct macaroon *
+macaroon_prepare_for_request(const struct macaroon *M,
+                             const struct macaroon *D,
+                             enum macaroon_returncode *err);
 
 /* Verification tool for verifying macaroons */
-struct macaroon_verifier*
+struct macaroon_verifier *
 macaroon_verifier_create();
 
 void
-macaroon_verifier_destroy(struct macaroon_verifier* V);
+macaroon_verifier_destroy(struct macaroon_verifier *V);
 
 int
-macaroon_verifier_satisfy_exact(struct macaroon_verifier* V,
-                                const unsigned char* predicate, size_t predicate_sz,
-                                enum macaroon_returncode* err);
+macaroon_verifier_satisfy_exact(struct macaroon_verifier *V,
+                                const unsigned char *predicate, size_t predicate_sz,
+                                enum macaroon_returncode *err);
 
 int
-macaroon_verifier_satisfy_general(struct macaroon_verifier* V,
-                                  int (*general_check)(void* f, const unsigned char* pred, size_t pred_sz),
-                                  void* f, enum macaroon_returncode* err);
+macaroon_verifier_satisfy_general(struct macaroon_verifier *V,
+                                  int (*general_check)(void *f, const unsigned char *pred, size_t pred_sz),
+                                  void *f, enum macaroon_returncode *err);
 
 int
-macaroon_verify(const struct macaroon_verifier* V,
-                const struct macaroon* M,
-                const unsigned char* key, size_t key_sz,
-                struct macaroon** MS, size_t MS_sz,
-                enum macaroon_returncode* err);
+macaroon_verify(const struct macaroon_verifier *V,
+                const struct macaroon *M,
+                const unsigned char *key, size_t key_sz,
+                struct macaroon **MS, size_t MS_sz,
+                enum macaroon_returncode *err);
 
 /* Access routines for the macaroon */
 void
-macaroon_location(const struct macaroon* M,
-                  const unsigned char** location, size_t* location_sz);
+macaroon_location(const struct macaroon *M,
+                  const unsigned char **location, size_t *location_sz);
 
 void
-macaroon_identifier(const struct macaroon* M,
-                    const unsigned char** identifier, size_t* identifier_sz);
+macaroon_identifier(const struct macaroon *M,
+                    const unsigned char **identifier, size_t *identifier_sz);
 
 void
-macaroon_signature(const struct macaroon* M,
-                   const unsigned char** signature, size_t* signature_sz);
+macaroon_signature(const struct macaroon *M,
+                   const unsigned char **signature, size_t *signature_sz);
 
 /* Serialize and deserialize macaroons */
 size_t
-macaroon_serialize_size_hint(const struct macaroon* M);
+macaroon_serialize_size_hint(const struct macaroon *M);
 
 int
-macaroon_serialize(const struct macaroon* M,
-                   char* data, size_t data_sz,
-                   enum macaroon_returncode* err);
+macaroon_serialize(const struct macaroon *M,
+                   char *data, size_t data_sz,
+                   enum macaroon_returncode *err);
 
-struct macaroon*
-macaroon_deserialize(const char* data, enum macaroon_returncode* err);
+struct macaroon *
+macaroon_deserialize(const char *data, enum macaroon_returncode *err);
 
 /* Human-readable representation *FOR DEBUGGING ONLY* */
 size_t
-macaroon_inspect_size_hint(const struct macaroon* M);
+macaroon_inspect_size_hint(const struct macaroon *M);
 
 int
-macaroon_inspect(const struct macaroon* M,
-                 char* data, size_t data_sz,
-                 enum macaroon_returncode* err);
+macaroon_inspect(const struct macaroon *M,
+                 char *data, size_t data_sz,
+                 enum macaroon_returncode *err);
 
 /* Utilities for manipulating and comparing macaroons */
 
 /* allocate a new copy of the macaroon */
-struct macaroon*
-macaroon_copy(const struct macaroon* M,
-              enum macaroon_returncode* err);
+struct macaroon *
+macaroon_copy(const struct macaroon *M,
+              enum macaroon_returncode *err);
 
 /* 0 if equal; !0 if non-equal; no other comparison implied */
 int
-macaroon_cmp(const struct macaroon* M, const struct macaroon* N);
+macaroon_cmp(const struct macaroon *M, const struct macaroon *N);
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -32,6 +32,7 @@
 extern int goGeneralCheck(void *f, unsigned char *pred, size_t pred_sz);
 
 int
-addSatisfier(struct macaroon_verifier *v, void *arg, enum macaroon_returncode *err) {
+addSatisfier(struct macaroon_verifier *v, void *arg, enum macaroon_returncode *err)
+{
 	return macaroon_verifier_satisfy_general(v, (int (*)(void *, const unsigned char *, size_t))goGeneralCheck, arg, err);
 }

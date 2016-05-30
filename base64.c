@@ -55,7 +55,7 @@
 #include "base64.h"
 
 static const char Base64[] =
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 static const char Pad64 = '=';
 
 /* (From RFC1521 and draft-ietf-dnssec-secext-03.txt)
@@ -106,9 +106,9 @@ static const char Pad64 = '=';
    end of the data is performed using the '=' character.
 
    Since all base64 input is an integral number of octets, only the
-         -------------------------------------------------                       
+         -------------------------------------------------
    following cases can arise:
-   
+
        (1) the final quantum of encoding input is an integral
            multiple of 24 bits; here, the final unit of encoded
 	   output will be an integral multiple of 4 characters
@@ -123,27 +123,25 @@ static const char Pad64 = '=';
 
 int
 b64_ntop(src, srclength, target, targsize)
-	unsigned char const *src;
-	size_t srclength;
-	char *target;
-	size_t targsize;
+unsigned char const *src;
+size_t srclength;
+char *target;
+size_t targsize;
 {
 	size_t datalength = 0;
 	unsigned char input[3];
 	unsigned char output[4];
 	size_t i;
-
-	while (2 < srclength) {
+	while (2 < srclength)
+	{
 		input[0] = *src++;
 		input[1] = *src++;
 		input[2] = *src++;
 		srclength -= 3;
-
 		output[0] = input[0] >> 2;
 		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
 		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
 		output[3] = input[2] & 0x3f;
-
 		if (datalength + 4 > targsize)
 			return (-1);
 		target[datalength++] = Base64[output[0]];
@@ -151,23 +149,21 @@ b64_ntop(src, srclength, target, targsize)
 		target[datalength++] = Base64[output[2]];
 		target[datalength++] = Base64[output[3]];
 	}
-    
 	/* Now we worry about padding. */
-	if (0 != srclength) {
+	if (0 != srclength)
+	{
 		/* Get what's left. */
 		input[0] = input[1] = input[2] = '\0';
 		for (i = 0; i < srclength; i++)
 			input[i] = *src++;
-	
 		output[0] = input[0] >> 2;
 		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
 		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
-
 		if (datalength + 4 > targsize)
 			return (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
-        if (srclength != 1)
+		if (srclength != 1)
 			target[datalength++] = Base64[output[2]];
 	}
 	if (datalength >= targsize)
@@ -184,38 +180,34 @@ b64_ntop(src, srclength, target, targsize)
 
 int
 b64_pton(src, target, targsize)
-	char const *src;
-	unsigned char *target;
-	size_t targsize;
+char const *src;
+unsigned char *target;
+size_t targsize;
 {
-    size_t tarindex;
+	size_t tarindex;
 	int state, ch;
 	unsigned char nextbyte;
 	char *pos;
-
 	state = 0;
 	tarindex = 0;
-
-	while ((ch = (unsigned char)*src++) != '\0') {
+	while ((ch = (unsigned char) * src++) != '\0')
+	{
 		if (isspace(ch))	/* Skip whitespace anywhere. */
 			continue;
-
 		if (ch == Pad64)
 			break;
-
 		if (ch == '+')
 			ch = '-';
-
 		if (ch == '/')
 			ch = '_';
-
 		pos = strchr(Base64, ch);
 		if (pos == 0) 		/* A non-base64 character. */
 			return (-1);
-
-		switch (state) {
+		switch (state)
+		{
 		case 0:
-			if (target) {
+			if (target)
+			{
 				if (tarindex >= targsize)
 					return (-1);
 				target[tarindex] = (pos - Base64) << 2;
@@ -223,13 +215,14 @@ b64_pton(src, target, targsize)
 			state = 1;
 			break;
 		case 1:
-			if (target) {
+			if (target)
+			{
 				if (tarindex >= targsize)
 					return (-1);
 				target[tarindex]   |=  (pos - Base64) >> 4;
 				nextbyte = ((pos - Base64) & 0x0f) << 4;
 				if (tarindex + 1 < targsize)
-					target[tarindex+1] = nextbyte;
+					target[tarindex + 1] = nextbyte;
 				else if (nextbyte)
 					return (-1);
 			}
@@ -237,13 +230,14 @@ b64_pton(src, target, targsize)
 			state = 2;
 			break;
 		case 2:
-			if (target) {
+			if (target)
+			{
 				if (tarindex >= targsize)
 					return (-1);
 				target[tarindex]   |=  (pos - Base64) >> 2;
 				nextbyte = ((pos - Base64) & 0x03) << 6;
 				if (tarindex + 1 < targsize)
-					target[tarindex+1] = nextbyte;
+					target[tarindex + 1] = nextbyte;
 				else if (nextbyte)
 					return (-1);
 			}
@@ -251,7 +245,8 @@ b64_pton(src, target, targsize)
 			state = 3;
 			break;
 		case 3:
-			if (target) {
+			if (target)
+			{
 				if (tarindex >= targsize)
 					return (-1);
 				target[tarindex] |= (pos - Base64);
@@ -259,25 +254,26 @@ b64_pton(src, target, targsize)
 			tarindex++;
 			state = 0;
 			break;
-        default:
-            break;
+		default:
+			break;
 		}
 	}
-
 	/* Skip padding and whitespace */
-	if (ch == Pad64) {
-		while (*src != '\0') {
-			if (!isspace(*src) && *src != Pad64) {
+	if (ch == Pad64)
+	{
+		while (*src != '\0')
+		{
+			if (!isspace(*src) && *src != Pad64)
+			{
 				return (-1);
 			}
 			++src;
 		}
 	}
-
 	if (target && tarindex < targsize &&
-	    target[tarindex] != 0 && state != 0) {
+	    target[tarindex] != 0 && state != 0)
+	{
 		return (-1);
 	}
-
 	return (tarindex);
 }

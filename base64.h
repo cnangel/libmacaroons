@@ -30,11 +30,11 @@
 #define macaroons_base64_h_
 
 int
-b64_ntop(const unsigned char* src, size_t srclength,
-         char* target, size_t targsize);
+b64_ntop(const unsigned char *src, size_t srclength,
+         char *target, size_t targsize);
 
 int
-b64_pton(const char* src,
-         unsigned char* target, size_t targsize);
+b64_pton(const char *src,
+         unsigned char *target, size_t targsize);
 
 #endif /* macaroons_base64_h_ */

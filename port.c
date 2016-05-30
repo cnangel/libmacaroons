@@ -39,19 +39,19 @@
 #include "sha256.h"
 #include "tweetnacl.h"
 
-#if crypto_secretbox_xsalsa20poly1305_KEYBYTES != MACAROON_SECRET_KEY_BYTES 
+#if crypto_secretbox_xsalsa20poly1305_KEYBYTES != MACAROON_SECRET_KEY_BYTES
 #error set your constants right
 #endif
 
-#if crypto_secretbox_xsalsa20poly1305_NONCEBYTES != MACAROON_SECRET_NONCE_BYTES 
+#if crypto_secretbox_xsalsa20poly1305_NONCEBYTES != MACAROON_SECRET_NONCE_BYTES
 #error set your constants right
 #endif
 
-#if crypto_secretbox_xsalsa20poly1305_ZEROBYTES != MACAROON_SECRET_TEXT_ZERO_BYTES 
+#if crypto_secretbox_xsalsa20poly1305_ZEROBYTES != MACAROON_SECRET_TEXT_ZERO_BYTES
 #error set your constants right
 #endif
 
-#if crypto_secretbox_xsalsa20poly1305_BOXZEROBYTES != MACAROON_SECRET_BOX_ZERO_BYTES 
+#if crypto_secretbox_xsalsa20poly1305_BOXZEROBYTES != MACAROON_SECRET_BOX_ZERO_BYTES
 #error set your constants right
 #endif
 
@@ -68,110 +68,101 @@ void
 explicit_bzero(void *buf, size_t len);
 
 void
-macaroon_memzero(void* data, size_t data_sz)
+macaroon_memzero(void *data, size_t data_sz)
 {
-    explicit_bzero(data, data_sz);
+	explicit_bzero(data, data_sz);
 }
 
 int
 timingsafe_bcmp(const void *b1, const void *b2, size_t n);
 
 int
-macaroon_memcmp(const void* data1, const void* data2, size_t data_sz)
+macaroon_memcmp(const void *data1, const void *data2, size_t data_sz)
 {
-    return timingsafe_bcmp(data1, data2, data_sz);
+	return timingsafe_bcmp(data1, data2, data_sz);
 }
 
 void
 arc4random_buf(void *buf, size_t len);
 
 int
-macaroon_randombytes(void* data, const size_t data_sz)
+macaroon_randombytes(void *data, const size_t data_sz)
 {
-    arc4random_buf(data, data_sz);
-    return 0;
+	arc4random_buf(data, data_sz);
+	return 0;
 }
 
 int
-macaroon_hmac(const unsigned char* _key, size_t _key_sz,
-              const unsigned char* text, size_t text_sz,
-              unsigned char* hash)
+macaroon_hmac(const unsigned char *_key, size_t _key_sz,
+              const unsigned char *text, size_t text_sz,
+              unsigned char *hash)
 {
-    int rc;
-    unsigned char key[MACAROON_HASH_BYTES];
-    explicit_bzero(key, MACAROON_HASH_BYTES);
-    memmove(key, _key, _key_sz < sizeof(key) ? _key_sz : sizeof(key));
-    HMAC_SHA256_Buf(key, MACAROON_HASH_BYTES, text, text_sz, hash);
-    return 0;
+	int rc;
+	unsigned char key[MACAROON_HASH_BYTES];
+	explicit_bzero(key, MACAROON_HASH_BYTES);
+	memmove(key, _key, _key_sz < sizeof(key) ? _key_sz : sizeof(key));
+	HMAC_SHA256_Buf(key, MACAROON_HASH_BYTES, text, text_sz, hash);
+	return 0;
 }
 
 int
-macaroon_secretbox(const unsigned char* enc_key,
-                   const unsigned char* enc_nonce,
-                   const unsigned char* plaintext, size_t plaintext_sz,
-                   unsigned char* ciphertext)
+macaroon_secretbox(const unsigned char *enc_key,
+                   const unsigned char *enc_nonce,
+                   const unsigned char *plaintext, size_t plaintext_sz,
+                   unsigned char *ciphertext)
 {
-    return crypto_secretbox_xsalsa20poly1305(ciphertext, plaintext, plaintext_sz, enc_nonce, enc_key);
+	return crypto_secretbox_xsalsa20poly1305(ciphertext, plaintext, plaintext_sz, enc_nonce, enc_key);
 }
 
 int
-macaroon_secretbox_open(const unsigned char* enc_key,
-                        const unsigned char* enc_nonce,
-                        const unsigned char* ciphertext, size_t ciphertext_sz,
-                        unsigned char* plaintext)
+macaroon_secretbox_open(const unsigned char *enc_key,
+                        const unsigned char *enc_nonce,
+                        const unsigned char *ciphertext, size_t ciphertext_sz,
+                        unsigned char *plaintext)
 {
-    return crypto_secretbox_xsalsa20poly1305_open(plaintext, ciphertext, ciphertext_sz, enc_nonce, enc_key);
+	return crypto_secretbox_xsalsa20poly1305_open(plaintext, ciphertext, ciphertext_sz, enc_nonce, enc_key);
 }
 
 void
-macaroon_bin2hex(const unsigned char* bin, size_t bin_sz, char* hex)
+macaroon_bin2hex(const unsigned char *bin, size_t bin_sz, char *hex)
 {
-    const static char hexes[] = "0123456789abcdef";
-
-    for (size_t i = 0; i < bin_sz; ++i)
-    {
-        hex[2 * i + 0] = hexes[(bin[i] >> 4) & 0xfu];
-        hex[2 * i + 1] = hexes[bin[i] & 0xfU];
-    }
-
-    hex[2 * bin_sz] = '\0';
+	const static char hexes[] = "0123456789abcdef";
+	for (size_t i = 0; i < bin_sz; ++i)
+	{
+		hex[2 * i + 0] = hexes[(bin[i] >> 4) & 0xfu];
+		hex[2 * i + 1] = hexes[bin[i] & 0xfU];
+	}
+	hex[2 * bin_sz] = '\0';
 }
 
 int
-macaroon_hex2bin(const char* hex, size_t hex_sz, unsigned char* bin)
+macaroon_hex2bin(const char *hex, size_t hex_sz, unsigned char *bin)
 {
-    size_t idx = 0;
-    static const char bet[] = "0123456789abcdef";
-    const char* tmp = NULL;
-    unsigned byte;
-
-    if(hex_sz & 1)
-    {
-        return -1;
-    }
-
-    for (idx = 0; idx < hex_sz; idx += 2)
-    {
-        byte = 0;
-        tmp = strchr(bet, hex[idx]);
-
-        if (!tmp)
-        {
-            return -1;
-        }
-
-        byte |= tmp - bet;
-        byte <<= 4;
-        tmp = strchr(bet, hex[idx + 1]);
-
-        if (!tmp)
-        {
-            return -1;
-        }
-
-        byte |= tmp - bet;
-        bin[idx >> 1] = byte & 0xffU;
-    }
-
-    return 0;
+	size_t idx = 0;
+	static const char bet[] = "0123456789abcdef";
+	const char *tmp = NULL;
+	unsigned byte;
+	if (hex_sz & 1)
+	{
+		return -1;
+	}
+	for (idx = 0; idx < hex_sz; idx += 2)
+	{
+		byte = 0;
+		tmp = strchr(bet, hex[idx]);
+		if (!tmp)
+		{
+			return -1;
+		}
+		byte |= tmp - bet;
+		byte <<= 4;
+		tmp = strchr(bet, hex[idx + 1]);
+		if (!tmp)
+		{
+			return -1;
+		}
+		byte |= tmp - bet;
+		bin[idx >> 1] = byte & 0xffU;
+	}
+	return 0;
 }

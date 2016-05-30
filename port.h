@@ -47,35 +47,35 @@
 #define MACAROON_SECRET_BOX_ZERO_BYTES 16U
 
 void
-macaroon_memzero(void* data, size_t data_sz);
+macaroon_memzero(void *data, size_t data_sz);
 
 int
-macaroon_memcmp(const void* data1, const void* data2, size_t data_sz);
+macaroon_memcmp(const void *data1, const void *data2, size_t data_sz);
 
 int
-macaroon_randombytes(void* data, const size_t data_sz);
+macaroon_randombytes(void *data, const size_t data_sz);
 
 int
-macaroon_hmac(const unsigned char* key, size_t key_sz,
-              const unsigned char* text, size_t text_sz,
-              unsigned char* hash);
+macaroon_hmac(const unsigned char *key, size_t key_sz,
+              const unsigned char *text, size_t text_sz,
+              unsigned char *hash);
 
 int
-macaroon_secretbox(const unsigned char* enc_key,
-                   const unsigned char* enc_nonce,
-                   const unsigned char* plaintext, size_t plaintext_sz,
-                   unsigned char* ciphertext);
+macaroon_secretbox(const unsigned char *enc_key,
+                   const unsigned char *enc_nonce,
+                   const unsigned char *plaintext, size_t plaintext_sz,
+                   unsigned char *ciphertext);
 
 int
-macaroon_secretbox_open(const unsigned char* enc_key,
-                        const unsigned char* enc_nonce,
-                        const unsigned char* ciphertext, size_t ciphertext_sz,
-                        unsigned char* plaintext);
+macaroon_secretbox_open(const unsigned char *enc_key,
+                        const unsigned char *enc_nonce,
+                        const unsigned char *ciphertext, size_t ciphertext_sz,
+                        unsigned char *plaintext);
 
 void
-macaroon_bin2hex(const unsigned char* bin, size_t bin_sz, char* hex);
+macaroon_bin2hex(const unsigned char *bin, size_t bin_sz, char *hex);
 
 int
-macaroon_hex2bin(const char* hex, size_t hex_sz, unsigned char* bin);
+macaroon_hex2bin(const char *hex, size_t hex_sz, unsigned char *bin);
 
 #endif /* macaroons_port_h_ */

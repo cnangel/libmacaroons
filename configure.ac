@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.61])
-AC_INIT([libmacaroons], [0.4.dev], [robert@rescrv.net])
+AC_PREREQ([2.59])
+AC_INIT([libmacaroons], [0.3.2], [robert@rescrv.net])
 m4_define([serial_tests], [
     m4_esyscmd([case `automake --version | head -n 1` in
                 *1.11*);;
@@ -32,6 +32,7 @@ AC_SUBST([BSDLIBS], [$BSDLIB])
 AC_CHECK_HEADER([libutil.h],[AC_DEFINE([HAVE_LIBUTIL_H],[1],[Define to 1 if you have the <libutil.h> header file.])],,)
 AC_CHECK_HEADER([bsd/stdlib.h],[AC_DEFINE([HAVE_BSD_STDLIB_H],[1],[Define to 1 if you have the <bsd/stdlib.h> header file.])],,)
 AC_CHECK_HEADER([bsd/libutil.h],[AC_DEFINE([HAVE_BSD_LIBUTIL_H],[1],[Define to 1 if you have the <bsd/libutil.h> header file.])],,)
+AC_CHECK_HEADER([util.h],[AC_DEFINE([HAVE_OSX_LIBUTIL_H],[1],[Define to 1 if you have the <util.h> header file.])],,)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
